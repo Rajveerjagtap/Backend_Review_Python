@@ -11,15 +11,17 @@ class User(Base):
     username = Column(String, unique=True, nullable=False)
     email = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=False)
-    reviews = relationship("Reviews", back_populates="user")
+
 
 class Movies(Base):
     __tablename__ = 'movies'
     id = Column(Integer, primary_key=True, autoincrement=True)
     title = Column(String, nullable=False)
-    description = Column(String)
-    release_date = Column(String)
-    director = Column(String)
+    year = Column(String)
+    imdb_id = Column(String , unique=True, nullable=False)
+    type = Column(String)
+    poster = Column(String)
+    imdb_rating = Column(String)
     reviews = relationship("Reviews", back_populates="movie")
 
 class Reviews(Base):
@@ -30,7 +32,7 @@ class Reviews(Base):
     review_text = Column(String)
     rating = Column(Integer)
     movie = relationship("Movies", back_populates="reviews")
-    user = relationship("User", back_populates="reviews")
+    user = relationship("User") 
 
 class UserRegister(BaseModel):
     username: str
@@ -64,3 +66,5 @@ class UpdateReview(BaseModel):
     review_text: Optional[str] = None
     rating: Optional[int] = None
 
+    class Config:
+        orm_mode = True
