@@ -7,7 +7,6 @@ from passlib.hash import bcrypt
 from models import User, UserLogin, UserRegister
 from utils import encode, get_db
 
-
 def register_user(app):
     @app.post("/register")
     async def register(user: UserRegister, db: Session = Depends(get_db)):

@@ -1,20 +1,14 @@
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.responses import JSONResponse
-from pydantic import EmailStr, BaseModel
 from sqlalchemy.orm import Session
-from typing import Optional
-from passlib.hash import bcrypt
-import jwt
-import datetime
 from models import User, UserLogin, UserRegister, Movies
 from utils import encode, get_db
-from database import SessionLocal, engine, Base
+from database import engine, Base
 from routes.auth import register_user, login_user
 from routes.tmdb import search
 
 app = FastAPI()
 
-# Create database tables
 Base.metadata.create_all(bind=engine)
 
 register_user(app)
@@ -23,6 +17,7 @@ login_user(app)
 @app.get("/")
 async def root():
     return {"message": "Movie Review API is running!"}
+
 
 @app.get("/search/{title}")
 async def search_movie(title: str, db: Session = Depends(get_db)):
