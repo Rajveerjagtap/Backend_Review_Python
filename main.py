@@ -66,7 +66,7 @@ async def movie_details(movie_id: int, db: Session = Depends(get_db), user_id: i
     """Retrieve details about a specific movie with its reviews"""
     return get_movie_details(movie_id, db)
 
-@app.post("/movies/{movie_id}/reviews")
+@app.post("/movies/reviews/{movie_id}")
 async def add_review(
     movie_id: int, 
     review: WriteReview = Body(...), 

@@ -22,7 +22,7 @@ def fetch_movie_from_tmdb(title: str):
     movie_id = movie_data["id"]
     details_resp = httpx.get(f"{TMDB_BASE_URL}/movie/{movie_id}", params={"api_key": TMDB_API_KEY})
     if details_resp.status_code != 200:
-        raise HTTPException(status_code=502, detail="TMDb API error")
+        raise HTTPException(status_code=502, detail="TMDb API error ")
     details = details_resp.json()
 
     imdb_id = details.get("imdb_id")
@@ -31,7 +31,7 @@ def fetch_movie_from_tmdb(title: str):
         if ext_resp.status_code == 200:
             imdb_id = ext_resp.json().get("imdb_id")
     if not imdb_id:
-        raise HTTPException(status_code=404, detail="IMDB ID not found for this movie.")
+        raise HTTPException(status_code=404, detail="IMDB ID not found !!!!")
 
     return {
         "title": details["title"],
