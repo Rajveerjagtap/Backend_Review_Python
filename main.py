@@ -23,7 +23,7 @@ login_user(app)
 
 @app.get("/")
 async def root():
-    return {"message": "Movie Review API is running!"}
+    return {"message": "running!"}
 
 
 @app.get("/search/{title}")
