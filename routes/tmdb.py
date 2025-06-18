@@ -92,9 +92,6 @@ def submit_review(movie_id: int, user_id: int, review_text: str, rating: int, db
     if not movie:
         raise HTTPException(status_code=404, detail="Movie not found")
     
-    existing = db.query(Reviews).filter(Reviews.movie_id == movie_id, Reviews.user_id == user_id).first()
-    if existing:
-        raise HTTPException(status_code=400, detail="You have already reviewed this movie")
     new_review = Reviews(
         movie_id=movie_id,
         user_id=user_id,

@@ -14,11 +14,7 @@ from routes.tmdb import (
     delete_review
 )
 
-app = FastAPI(
-    title="Movie Review Aggregator API",
-    description="An API for aggregating movie reviews and ratings",
-    version="1.0.0"
-)
+app = FastAPI()
 
 Base.metadata.create_all(bind=engine)
 
@@ -113,29 +109,39 @@ async def remove_review(
     """Delete a specific review"""
     return delete_review(movie_id, review_id, user_id, db)
 
-@app.get("/user/profile")
+@app.get("/profile")
 async def user_profile(db: Session = Depends(get_db), user_id: int = Depends(jwt_required)):
-    """Get user profile with all submitted reviews"""
+    """Get user profile with all submitted reviews grouped by movie"""
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
     reviews = db.query(Reviews).filter(Reviews.user_id == user_id).all()
     
+    movies_reviews = {}
+    for review in reviews:
+        movie_id = review.movie_id
+        if movie_id not in movies_reviews:
+            movies_reviews[movie_id] = {
+                "movie_id": movie_id,
+                "movie_title": review.movie.title,
+                "review_count": 0,
+                "reviews": []
+            }
+        movies_reviews[movie_id]["review_count"] += 1
+        movies_reviews[movie_id]["reviews"].append({
+            "id": review.id,
+            "rating": review.rating,
+            "review_text": review.review_text
+        })
+    
     return {
         "user_id": user.id,
         "username": user.username,
         "email": user.email,
         "total_reviews": len(reviews),
-        "reviews": [
-            {
-                "id": r.id,
-                "movie_id": r.movie_id,
-                "movie_title": r.movie.title,
-                "rating": r.rating,
-                "review_text": r.review_text
-            } for r in reviews
-        ]
+        "movies_reviewed": len(movies_reviews),
+        "reviews_by_movie": list(movies_reviews.values())
     }
 
 
